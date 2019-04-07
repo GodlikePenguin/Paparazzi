@@ -1,4 +1,4 @@
-# Paparrazi
+# Paparazzi
 
 Small tool to take screenshots of all reachable pages on a website.
 
