@@ -1,4 +1,5 @@
 const puppeteer = require('puppeteer');
+const fs = require('fs');
 
 let browser;
 
@@ -30,6 +31,10 @@ class SetQueue {
 }
 
 async function run(args) {
+  if (!fs.existsSync('./images')){
+    fs.mkdirSync('./images');
+  }
+
   let q = new SetQueue();
   browser = await puppeteer.launch();
   let page = await browser.newPage();
