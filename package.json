@@ -1,11 +1,12 @@
 {
   "name": "Paparazzi",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "CLI Tool to scrape images from multiple pages of a website",
   "main": "index.js",
   "author": "Edward Dobson",
   "license": "MIT",
   "dependencies": {
-    "puppeteer": "^1.14.0"
+    "puppeteer": "^1.14.0",
+    "yargs": "^13.2.2"
   }
 }

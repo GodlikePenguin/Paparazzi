@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 
@@ -31,23 +32,25 @@ class SetQueue {
 }
 
 async function run(args) {
-  if (!fs.existsSync('./images')){
-    fs.mkdirSync('./images');
+  if (!fs.existsSync(args.output)) {
+    fs.mkdirSync(args.output);
   }
 
   let q = new SetQueue();
   browser = await puppeteer.launch();
   let page = await browser.newPage();
-  await page.setViewport({ width: 1920, height: 1080 });
-  let firstURL = args[0];
-  if (firstURL.substring(0, 3) !== 'htt') {
-    firstURL = 'https://'+firstURL;
+  await page.setViewport({ width: args.width, height: args.height });
+
+  for (let url of args._) {
+    if (url.substring(0, 4) !== 'http') {
+      url = 'https://'+url;
+    }
+    q.push(url);
   }
-  q.push(firstURL);
 
   while (!q.empty()) {
     try {
-      await screenshot(page, q.pop());
+      await screenshot(page, q.pop(), args.output);
       await addLinks(page, q);
     } catch (e) {
       throw e;
@@ -58,12 +61,12 @@ async function run(args) {
   await browser.close();
 }
 
-async function screenshot(page, url) {
+async function screenshot(page, url, outputDir) {
   let fileName = url.replace(/\//g, '_');
   await page.goto(url);
   await page.waitFor(500);
   console.log(`Snapping ${url}`);
-  await page.screenshot({ path: `./images/${fileName}.png`, type: 'png', fullPage: true });
+  await page.screenshot({ path: `${outputDir}/${fileName}.png`, type: 'png', fullPage: true });
 }
 
 async function addLinks(page, q) {
@@ -74,7 +77,29 @@ async function addLinks(page, q) {
   }
 }
 
-run(process.argv.filter((k, i) => i > 1))
+let argv = require('yargs')
+  .usage('Usage: $0 [options] URL')
+  .demandCommand(1, 'You need to specify at least 1 URL')
+
+  .alias('o', 'output')
+  .nargs('o', 1)
+  .describe('o', 'Output location')
+  .default('o', './images')
+
+  .alias('w', 'width')
+  .nargs('w', 1)
+  .describe('w', 'Screenshot width')
+  .default('w', 1920)
+
+  .alias('h', 'height')
+  .nargs('h', 1)
+  .describe('h', 'Screenshot height')
+  .default('h', 1080)
+
+  .help('help')
+  .argv;
+
+run(argv)
   .catch(r => {
     console.log(r);
     browser && browser.close();
