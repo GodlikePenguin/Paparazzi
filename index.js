@@ -39,7 +39,7 @@ async function run(args) {
   let q = new SetQueue();
   browser = await puppeteer.launch();
   let page = await browser.newPage();
-  await page.setViewport({ width: args.width, height: args.height });
+  await page.setViewport({ width: args.width, height: args.height, deviceScaleFactor: args.scale });
 
   for (let url of args._) {
     if (url.substring(0, 4) !== 'http') {
@@ -50,7 +50,7 @@ async function run(args) {
 
   while (!q.empty()) {
     try {
-      await screenshot(page, q.pop(), args.output);
+      await screenshot(page, q.pop(), args);
       await addLinks(page, q);
     } catch (e) {
       throw e;
@@ -61,12 +61,12 @@ async function run(args) {
   await browser.close();
 }
 
-async function screenshot(page, url, outputDir) {
+async function screenshot(page, url, args) {
   let fileName = url.replace(/\//g, '_');
   await page.goto(url);
-  await page.waitFor(500);
+  await page.waitFor(args.delay);
   console.log(`Snapping ${url}`);
-  await page.screenshot({ path: `${outputDir}/${fileName}.png`, type: 'png', fullPage: true });
+  await page.screenshot({ path: `${args.output}/${fileName}.png`, type: 'png', fullPage: args.fullPage });
 }
 
 async function addLinks(page, q) {
@@ -80,6 +80,7 @@ async function addLinks(page, q) {
 let argv = require('yargs')
   .usage('Usage: $0 [options] URL')
   .demandCommand(1, 'You need to specify at least 1 URL')
+  .strict()
 
   .alias('o', 'output')
   .nargs('o', 1)
@@ -95,6 +96,19 @@ let argv = require('yargs')
   .nargs('h', 1)
   .describe('h', 'Screenshot height')
   .default('h', 1080)
+
+  .nargs('scale', 1)
+  .describe('scale', 'Scale factor for the rendered website')
+  .default('scale', 1)
+
+  .nargs('delay', 1)
+  .describe('delay', 'Number of ms to wait before taking the screenshot on each page.')
+  .default('delay', 0)
+
+  .boolean(['full-page'])
+  .describe('full-page', 'Ensure all content on page is included in screenshot ' +
+    '(will override width and height settings)')
+  .default('full-page', false)
 
   .help('help')
   .argv;
