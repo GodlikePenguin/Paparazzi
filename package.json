@@ -1,12 +1,16 @@
 {
-  "name": "Paparazzi",
-  "version": "0.2.0",
-  "description": "CLI Tool to scrape images from multiple pages of a website",
+  "name": "paparazzi-cli",
+  "version": "0.2.1",
+  "description": "CLI tool to snap all the angles of your website",
   "main": "index.js",
   "author": "Edward Dobson",
   "license": "MIT",
+  "repository": "https://github.com/GodlikePenguin/Paparazzi",
   "dependencies": {
     "puppeteer": "^1.14.0",
     "yargs": "^13.2.2"
+  },
+  "bin": {
+    "paparazzi": "./index.js"
   }
 }

@@ -6,7 +6,13 @@ Small tool to take screenshots of all reachable pages on a website.
 
 Takes a screenshot of the requested page and then scrapes the page for `a` elements and repeats.
 
+## Installation:
+```
+npm i -g paparazzi-cli
+```
+
 ## Usage:
 ```
-node index.js [options] <URL>
+paparazzi [options] <URL1> <URL2> ...
 ```
+The full set of options can be found using `paparazzi --help`
