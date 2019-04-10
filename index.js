@@ -78,7 +78,7 @@ async function addLinks(page, q) {
 }
 
 let argv = require('yargs')
-  .usage('Usage: $0 [options] URL')
+  .usage('Usage: $0 [options] <URL1> [<URL2> ...]')
   .demandCommand(1, 'You need to specify at least 1 URL')
   .strict()
 

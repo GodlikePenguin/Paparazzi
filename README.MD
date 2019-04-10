@@ -15,6 +15,6 @@ npm i -g paparazzi-cli
 
 ## Usage:
 ```
-paparazzi [options] <URL1> <URL2> ...
+paparazzi [options] <URL1> [<URL2> ...]
 ```
 The full set of options can be found using `paparazzi --help`
