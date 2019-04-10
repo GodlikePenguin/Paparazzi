@@ -6,6 +6,11 @@
   "author": "Edward Dobson",
   "license": "MIT",
   "repository": "https://github.com/GodlikePenguin/Paparazzi",
+  "keywords": [
+    "puppeteer",
+    "screenshot",
+    "cli"
+  ],
   "dependencies": {
     "puppeteer": "^1.14.0",
     "yargs": "^13.2.2"
