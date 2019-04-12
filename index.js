@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const puppeteer = require('puppeteer');
 const fs = require('fs');
+const URL = require('url').URL;
 
 let browser;
 
@@ -31,6 +32,13 @@ class SetQueue {
   }
 }
 
+String.prototype.stripPrefix = function(prefix) {
+  if (this.startsWith(prefix)) {
+    return this.substring(prefix.length);
+  }
+  return this;
+};
+
 async function run(args) {
   if (!fs.existsSync(args.output)) {
     fs.mkdirSync(args.output);
@@ -41,17 +49,24 @@ async function run(args) {
   let page = await browser.newPage();
   await page.setViewport({ width: args.width, height: args.height, deviceScaleFactor: args.scale });
 
+  let allowedHosts = [];
+
   for (let url of args._) {
     if (url.substring(0, 4) !== 'http') {
       url = 'https://'+url;
     }
+    //ignore www. so we're more versatile
+    //needs .trim to remove white space too
+    allowedHosts.push(new URL(url).hostname.stripPrefix('www.').trim());
     q.push(url);
   }
+
+  if (!args.allowAllHosts) console.log(`Only snapping pages from: ${allowedHosts}`);
 
   while (!q.empty()) {
     try {
       await screenshot(page, q.pop(), args);
-      await addLinks(page, q);
+      await addLinks(page, q, allowedHosts, args);
     } catch (e) {
       throw e;
     }
@@ -62,18 +77,26 @@ async function run(args) {
 }
 
 async function screenshot(page, url, args) {
+  console.log(`Snapping ${url}`);
   let fileName = url.replace(/\//g, '_');
   await page.goto(url);
   await page.waitFor(args.delay);
-  console.log(`Snapping ${url}`);
   await page.screenshot({ path: `${args.output}/${fileName}.png`, type: 'png', fullPage: args.fullPage });
 }
 
-async function addLinks(page, q) {
-  let links = await page.$$eval('a', al => { return al.map(a => a.href)});
+async function addLinks(page, q, allowedHosts, args) {
+  //Get all the links on the page, ignore empty href.
+  let links = await page.$$eval('a', al => { return al.map(a => a.href).filter(a => a)});
 
   for (let l of links) {
-    q.push(l);
+    try {
+      let ul = new URL(l);
+      if (args.allowAllHosts || allowedHosts.includes(ul.hostname.stripPrefix('www.').trim())) {
+        q.push(l);
+      }
+    } catch (e) {
+      console.log(`Could not parse ${l}, skipping.`)
+    }
   }
 }
 
@@ -105,10 +128,14 @@ let argv = require('yargs')
   .describe('delay', 'Number of ms to wait before taking the screenshot on each page.')
   .default('delay', 0)
 
-  .boolean(['full-page'])
+  .boolean(['full-page', 'allow-all-hosts'])
+
   .describe('full-page', 'Ensure all content on page is included in screenshot ' +
     '(will override width and height settings)')
   .default('full-page', false)
+
+  .describe('allow-all-hosts', 'Take screenshots of any host, not just those specified')
+  .default('allow-all-hosts', false)
 
   .help('help')
   .argv;
