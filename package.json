@@ -1,6 +1,6 @@
 {
   "name": "paparazzi-cli",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "CLI tool to snap all the angles of your website",
   "main": "index.js",
   "author": "Edward Dobson",
@@ -11,11 +11,18 @@
     "screenshot",
     "cli"
   ],
+  "scripts": {
+    "test": "nyc -x **/*.spec.js mocha **/*.spec.js"
+  },
   "dependencies": {
     "puppeteer": "^1.14.0",
     "yargs": "^13.2.2"
   },
   "bin": {
     "paparazzi": "./index.js"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "sinon": "^7.3.1"
   }
 }
