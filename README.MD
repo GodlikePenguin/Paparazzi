@@ -2,6 +2,7 @@
     <img width=256 src="https://raw.githubusercontent.com/GodlikePenguin/Paparazzi/master/assets/logo.png">
     <br />
     <a href="https://badge.fury.io/js/paparazzi-cli"><img src="https://badge.fury.io/js/paparazzi-cli.svg" alt="npm version" height="18"></a>
+    <a href="https://travis-ci.com/GodlikePenguin/Paparazzi"><img src="https://travis-ci.com/GodlikePenguin/Paparazzi.svg?branch=master"></a>
 </p>
 
 Small tool to take screenshots of all reachable pages on a website.
