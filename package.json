@@ -1,6 +1,6 @@
 {
   "name": "paparazzi-cli",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "CLI tool to snap all the angles of your website",
   "main": "index.js",
   "author": "Edward Dobson",

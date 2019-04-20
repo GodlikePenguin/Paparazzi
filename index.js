@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 const puppeteer = require('puppeteer');
+const devices = require('puppeteer/DeviceDescriptors');
 const fs = require('fs');
 const URL = require('url').URL;
+const yargs = require('yargs');
 const lib = require("./lib");
 
 let browser;
@@ -41,6 +43,25 @@ String.prototype.stripPrefix = function(prefix) {
 };
 
 async function run(args) {
+  if (args.listDevices) {
+    console.log('Available devices are:');
+    devices.forEach(a => console.log(a.name));
+    return;
+  }
+
+  if (args._.length === 0) {
+    yargs.showHelp();
+    throw 'You must specify at least one URL';
+  }
+
+  let realDevice;
+  if (args.device) {
+    realDevice = devices[args.device];
+    if (!realDevice) {
+      throw `Unrecognised device: ${args.device}`;
+    }
+  }
+
   if (!fs.existsSync(args.output)) {
     fs.mkdirSync(args.output);
   }
@@ -48,7 +69,11 @@ async function run(args) {
   let q = new SetQueue();
   browser = await puppeteer.launch();
   let page = await browser.newPage();
+
+  //Apply more specific arguments last so they are not overwritten
   await page.setViewport({ width: args.width, height: args.height, deviceScaleFactor: args.scale });
+  if (args.userAgent) await page.setUserAgent(args.userAgent);
+  if (realDevice) await page.emulate(realDevice);
 
   let allowedHosts = [];
 
@@ -73,13 +98,14 @@ async function run(args) {
     }
   }
 
+  console.log(`Finished taking ${q.queue.length} snaps`);
+
   await page.close();
   await browser.close();
 }
 
-let argv = require('yargs')
+let argv = yargs
   .usage('Usage: $0 [options] <URL1> [<URL2> ...]')
-  .demandCommand(1, 'You need to specify at least 1 URL')
   .strict()
 
   .alias('o', 'output')
@@ -105,7 +131,15 @@ let argv = require('yargs')
   .describe('delay', 'Number of ms to wait before taking the screenshot on each page.')
   .default('delay', 0)
 
-  .boolean(['full-page', 'allow-all-hosts'])
+  .nargs('user-agent', 1)
+  .describe('user-agent', 'Set the user agent to specify in each request')
+
+  .nargs('device', 1)
+  .describe('device', 'Emulate this device when taking the screenshots')
+
+  .boolean(['list-devices', 'full-page', 'allow-all-hosts'])
+
+  .describe('list-devices', 'List all devices which can be emulated (Note this is a long list)')
 
   .describe('full-page', 'Ensure all content on page is included in screenshot ' +
     '(will override width and height settings)')
@@ -121,4 +155,5 @@ run(argv)
   .catch(r => {
     console.log(r);
     browser && browser.close();
+    process.exitCode = 1;
   });
