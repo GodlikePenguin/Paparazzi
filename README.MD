@@ -3,6 +3,7 @@
     <br />
     <a href="https://badge.fury.io/js/paparazzi-cli"><img src="https://badge.fury.io/js/paparazzi-cli.svg" alt="npm version" height="18"></a>
     <a href="https://travis-ci.com/GodlikePenguin/Paparazzi"><img src="https://travis-ci.com/GodlikePenguin/Paparazzi.svg?branch=master"></a>
+<a href="https://app.fossa.io/projects/git%2Bgithub.com%2FGodlikePenguin%2FPaparazzi?ref=badge_shield" alt="FOSSA Status"><img src="https://app.fossa.io/api/projects/git%2Bgithub.com%2FGodlikePenguin%2FPaparazzi.svg?type=shield"/></a>
 </p>
 
 Small tool to take screenshots of all reachable pages on a website.
@@ -38,3 +39,7 @@ Options:
   --help             Show help                                         [boolean]
 ```
 The full set of options can be found using `paparazzi --help`
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FGodlikePenguin%2FPaparazzi.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FGodlikePenguin%2FPaparazzi?ref=badge_large)
