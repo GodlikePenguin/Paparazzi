@@ -28,6 +28,10 @@ export default class SetQueue<T> {
   }
 
   size(): number {
+    return this.queue.length;
+  }
+
+  remaining(): number {
     return this.queue.length - this.index;
   }
 }

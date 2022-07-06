@@ -1,11 +1,11 @@
 {
   "name": "paparazzi-cli",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "engines": {
     "node": ">=16.0.0"
   },
   "description": "CLI tool to snap all the angles of your website",
-  "main": "index.js",
+  "main": "./dist/lib/index.js",
   "author": "Edward Dobson",
   "license": "MIT",
   "repository": "https://github.com/GodlikePenguin/Paparazzi",
@@ -14,15 +14,34 @@
     "screenshot",
     "cli"
   ],
-  "bin": {
-    "paparazzi": "./src/bin/paparazzi.js"
+  "bin": "bin/run",
+  "files": [
+    "/bin",
+    "/dist",
+    "/npm-shrinkwrap.json",
+    "/oclif.manifest.json"
+  ],
+  "oclif": {
+    "bin": "paparazzi-cli",
+    "default": ".",
+    "commands": "./dist/commands",
+    "plugins": [
+      "@oclif/plugin-help",
+      "@oclif/plugin-plugins"
+    ]
   },
   "scripts": {
-    "test": "jest --collectCoverage"
+    "build": "tsc",
+    "test": "jest --collectCoverage",
+    "lint": "eslint **/*.ts"
   },
   "dependencies": {
+    "@oclif/core": "^1.9.3",
+    "@oclif/parser": "^3.8.7",
+    "@oclif/plugin-help": "^5",
+    "@oclif/plugin-plugins": "^2.0.1",
     "puppeteer": "^14.4.1",
-    "yargs": "^17.5.1"
+    "ts-node": "^10.8.2"
   },
   "devDependencies": {
     "@types/jest": "^28.1.2",
@@ -31,6 +50,7 @@
     "eslint": "^8.18.0",
     "eslint-config-eslint": "^7.0.0",
     "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-node": "^11.1.0",
     "jest": "^28.1.1",
     "jest-mock-extended": "^2.0.6",
     "ts-jest": "^28.0.5",
