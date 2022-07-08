@@ -1,0 +1,15 @@
+name: VerifyInstall
+on: push
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      PUPPETEER_SKIP_DOWNLOAD: true
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: "16"
+      - name: Run the tests
+        run: ./scripts/test-install.sh
