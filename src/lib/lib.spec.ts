@@ -1,5 +1,5 @@
 import { mock } from "jest-mock-extended";
-import type { Page } from "puppeteer";
+import type { Page } from "playwright";
 import { screenshot } from "./lib"
 import { PaparazziProps } from "./PaparazziProps";
 

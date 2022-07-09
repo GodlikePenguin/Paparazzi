@@ -1,4 +1,4 @@
-import { Page } from "puppeteer";
+import { Page } from "playwright";
 import { PaparazziProps } from "./PaparazziProps";
 import SetQueue from "./SetQueue";
 
@@ -11,7 +11,7 @@ export async function screenshot(page: Page, url: string, args: PaparazziProps) 
 
 export async function addLinks(page: Page, q: SetQueue<string>, allowedHosts: Array<string>, args: PaparazziProps) {
   //Get all the links on the page, ignore empty href.
-  const links = await page.$$eval("a", elements => { return elements.map(a => (a as HTMLLinkElement).href).filter(a => a) });
+  const links = await page.$$eval("a", elements => { return elements.map(a => a.href).filter(a => a) });
 
   for (const l of links) {
     try {

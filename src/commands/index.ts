@@ -1,4 +1,4 @@
-import puppeteer, { Browser } from "puppeteer";
+import { Browser, chromium, devices } from "playwright";
 import fs from "fs";
 import { URL } from "url";
 import { addLinks, screenshot, SetQueue, stripPrefix } from "../lib";
@@ -18,7 +18,7 @@ export class Paparazzi extends Command {
         const { flags, argv } = await this.parse(Paparazzi);
         if (flags["list-devices"]) {
             this.log("Available devices are:");
-            Object.entries(puppeteer.devices).forEach(([key, value]) => this.log(`${key}: ${JSON.stringify(value, null, 2)}`));
+            Object.entries(devices).forEach(([key, value]) => this.log(`${key}: ${JSON.stringify(value, null, 2)}`));
             this.exit();
         }
 
@@ -28,7 +28,7 @@ export class Paparazzi extends Command {
 
         let realDevice;
         if (flags.device) {
-            realDevice = puppeteer.devices[flags.device];
+            realDevice = devices[flags.device];
             if (!realDevice) {
                 this.error(`Unrecognised device: ${flags.device}`, { exit: 1 });
             }
@@ -39,16 +39,22 @@ export class Paparazzi extends Command {
         }
 
         const q = new SetQueue<string>();
-        browser = await puppeteer.launch();
-        const page = await browser.newPage();
 
-        //Apply more specific arguments last so they are not overwritten
-        await page.setViewport({ width: flags.width, height: flags.height, deviceScaleFactor: flags.scale });
-        if (flags["user-agent"]) await page.setUserAgent(flags["user-agent"]);
-        if (realDevice) await page.emulate(realDevice);
+        browser = await chromium.launch();
+        let context = await browser.newContext({
+            viewport: {
+                height: flags.height,
+                width: flags.width
+            },
+            userAgent: flags["user-agent"],
+            deviceScaleFactor: flags.scale
+        });
+        if (realDevice) context = await browser.newContext({
+            ...realDevice
+        });
+        const page = await context.newPage();
 
         const allowedHosts = [];
-
         for (const arg of argv) {
             let url = arg as string
             if (!url.startsWith("http")) {
