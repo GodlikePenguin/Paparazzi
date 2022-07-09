@@ -1,6 +1,6 @@
 {
   "name": "paparazzi-cli",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "engines": {
     "node": ">=16.0.0"
   },
@@ -53,6 +53,7 @@
     "eslint-plugin-node": "^11.1.0",
     "jest": "^28.1.1",
     "jest-mock-extended": "^2.0.6",
+    "playwright": "^1.23.2",
     "ts-jest": "^28.0.5",
     "typescript": "^4.7.4"
   }
