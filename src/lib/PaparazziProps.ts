@@ -44,6 +44,10 @@ export const FLAGS = {
     "allow-all-hosts": Flags.boolean({
         description: "Take screenshots of any HTTP host, not just those specified",
         default: false
+    }),
+    "ignore-anchors": Flags.boolean({
+        description: "Don't take screenshots of each separate anchor link",
+        default: false
     })
 }
 

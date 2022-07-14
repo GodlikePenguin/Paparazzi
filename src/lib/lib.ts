@@ -2,32 +2,54 @@ import { Page } from "playwright";
 import { PaparazziProps } from "./PaparazziProps";
 import SetQueue from "./SetQueue";
 
-export async function screenshot(page: Page, url: string, args: PaparazziProps) {
-  const fileName = url.replace(/\//g, "_");
-  await page.goto(url);
-  await page.waitForTimeout(args.delay);
-  await page.screenshot({ path: `${args.output}/${fileName}.png`, type: "png", fullPage: args["full-page"] });
-}
-
-export async function addLinks(page: Page, q: SetQueue<string>, allowedHosts: Array<string>, args: PaparazziProps) {
-  //Get all the links on the page, ignore empty href.
-  const links = await page.$$eval("a", elements => { return elements.map(a => a.href).filter(a => a) });
-
-  for (const l of links) {
-    try {
-      const ul = new URL(l);
-      if (args["allow-all-hosts"] || allowedHosts.includes(stripPrefix(ul.hostname, "www.").trim())) {
-        q.push(l);
-      }
-    } catch (e) {
-      console.log(`Could not parse ${l}, skipping.`)
-    }
-  }
-}
-
 export function stripPrefix(base: string, prefix: string): string {
   if (base.startsWith(prefix)) {
     return base.substring(prefix.length);
   }
   return base;
+}
+
+export type ScreenshotProps = {
+  page: Page,
+  url: string,
+  baseProps: PaparazziProps
+}
+
+export async function screenshot(props: ScreenshotProps) {
+  const fileName = props.url.replace(/\//g, "_");
+  await props.page.goto(props.url);
+  await props.page.waitForTimeout(props.baseProps.delay);
+  await props.page.screenshot({
+    path: `${props.baseProps.output}/${fileName}.png`,
+    type: "png",
+    fullPage: props.baseProps["full-page"]
+  });
+}
+
+export type AddLinksProps = {
+  page: Page,
+  queue: SetQueue<string>,
+  allowedHosts: Array<string>,
+  baseProps: PaparazziProps
+}
+
+export async function addLinks(props: AddLinksProps) {
+  //Get all the links on the page, ignore empty href.
+  const links = await props.page.$$eval("a", elements => { return elements.map(a => a.href).filter(a => a) });
+
+  for (const l of links) {
+    try {
+      const ul = new URL(l);
+      if (!props.baseProps["allow-all-hosts"] && !props.allowedHosts.includes(stripPrefix(ul.hostname, "www.").trim())) {
+        continue;
+      }
+      if (props.baseProps["ignore-anchors"]) {
+        props.queue.push(l.substring(0, l.lastIndexOf("#")) || l);
+      } else {
+        props.queue.push(l);
+      }
+    } catch (e) {
+      console.log(`Could not parse ${l}, skipping.`)
+    }
+  }
 }
