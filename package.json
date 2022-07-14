@@ -32,7 +32,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "jest --collectCoverage",
+    "test": "jest",
     "lint": "eslint **/*.ts"
   },
   "dependencies": {
