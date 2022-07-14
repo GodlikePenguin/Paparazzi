@@ -37,3 +37,18 @@ jobs:
       # Finally, run our tests
       - name: Run the tests
         run: npm test
+  coverage:
+    needs: [ test ]
+    name: coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions/setup-node@master
+        with:
+          node-version: "16"
+      - run: npm install
+      - uses: paambaati/codeclimate-action@v3.0.0
+        env:
+          CC_TEST_REPORTER_ID: ${{secrets.CC_REPORTER_ID}}
+        with:
+          coverageCommand: npm test
