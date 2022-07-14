@@ -1,7 +1,7 @@
 <p align="center">
     <img width=256 src="https://raw.githubusercontent.com/GodlikePenguin/Paparazzi/master/assets/logo.png">
     <br />
-    <a href="https://badge.fury.io/js/paparazzi-cli"><img src="https://badge.fury.io/js/paparazzi-cli.svg" alt="npm version" height="18"></a>
+    <a href="https://www.npmjs.com/package/paparazzi-cli"><img alt="npm" src="https://img.shields.io/npm/v/paparazzi-cli?logo=npm"></a>
     <a href="https://github.com/GodlikePenguin/Paparazzi/actions"><img src="https://github.com/GodlikePenguin/Paparazzi/actions/workflows/test.yml/badge.svg"></a>
 </p>
 
