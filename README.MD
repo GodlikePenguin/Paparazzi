@@ -30,6 +30,7 @@ FLAGS
   --allow-all-hosts     Take screenshots of any HTTP host, not just those specified
   --device=<value>      Emulate this device when making HTTP requests
   --full-page           Ensure all content on page is included in screenshot (will override width and height settings)
+  --ignore-anchors      Don't take screenshots of each separate anchor link
   --list-devices        List all devices which can be emulated and exit (Note this is a long list)
   --user-agent=<value>  User Agent to spoof whilst making HTTP requests
 
