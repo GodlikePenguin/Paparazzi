@@ -3,6 +3,8 @@
     <br />
     <a href="https://www.npmjs.com/package/paparazzi-cli"><img alt="npm" src="https://img.shields.io/npm/v/paparazzi-cli?logo=npm"></a>
     <a href="https://github.com/GodlikePenguin/Paparazzi/actions"><img src="https://github.com/GodlikePenguin/Paparazzi/actions/workflows/test.yml/badge.svg"></a>
+    <a href="https://codeclimate.com/github/GodlikePenguin/Paparazzi"><img alt="Code Climate coverage" src="https://img.shields.io/codeclimate/coverage/GodlikePenguin/Paparazzi?logo=codeclimate"></a>
+    <a href="https://codeclimate.com/github/GodlikePenguin/Paparazzi"><img alt="Code Climate maintainability" src="https://img.shields.io/codeclimate/maintainability/GodlikePenguin/Paparazzi?logo=codeclimate"></a>
 </p>
 
 Small tool to take screenshots of all reachable pages on a website.
