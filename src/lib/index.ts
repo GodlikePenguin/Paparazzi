@@ -1,4 +1,4 @@
-import SetQueue from "./SetQueue";
-import { PaparazziProps } from "./PaparazziProps";
-export { addLinks, screenshot, stripPrefix } from "./lib";
+import SetQueue from "./SetQueue.js";
+import { PaparazziProps } from "./PaparazziProps.js";
+export { addLinks, screenshot, stripPrefix } from "./lib.js";
 export { PaparazziProps, SetQueue };

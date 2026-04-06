@@ -1,54 +1,45 @@
-name: Jest
+name: Test
 on: push
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     env:
       PUPPETEER_SKIP_DOWNLOAD: true
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Setup Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
-          node-version: "16"
+          node-version: "22"
+          cache: "npm"
 
-      # Speed up subsequent runs with caching
-      - name: Cache node modules
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-node-modules
-        with:
-          # npm cache files are stored in `~/.npm` on Linux/macOS
-          path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-
-      # Install required deps for action
       - name: Install Dependencies
-        run: npm install
+        run: npm ci
 
-      # Lint the code
+      - name: Build
+        run: npm run build
+
+      - name: Check README is up to date
+        run: |
+          node ./scripts/update-readme.ts
+          if ! git diff --quiet README.md; then
+            echo "README.md is out of date. Run 'npm run postbuild' to update it."
+            git diff README.md
+            exit 1
+          fi
+
       - name: Lint
         run: npm run lint
 
-      # Finally, run our tests
       - name: Run the tests
-        run: npm test
-  coverage:
-    needs: [ test ]
-    name: coverage
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-      - uses: actions/setup-node@master
-        with:
-          node-version: "16"
-      - run: npm install
-      - uses: paambaati/codeclimate-action@v3.0.0
-        env:
-          CC_TEST_REPORTER_ID: 7f8014791bb2bd91ef64fa4772ab409b1504e87047711934e37aefc105b0c4b5
-        with:
-          coverageCommand: npm test
+        run: npm run test
+
+      - name: Run tests with coverage
+        run: npx vitest --coverage.enabled true
+
+      - name: Report Coverage
+        uses: davelosert/vitest-coverage-report-action@v2
+        if: always()

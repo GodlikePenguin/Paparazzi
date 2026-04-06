@@ -1,6 +1,6 @@
 import { Page } from "playwright";
-import { PaparazziProps } from "./PaparazziProps";
-import SetQueue from "./SetQueue";
+import { PaparazziProps } from "./PaparazziProps.js";
+import SetQueue from "./SetQueue.js";
 
 export function stripPrefix(base: string, prefix: string): string {
   if (base.startsWith(prefix)) {
