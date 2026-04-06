@@ -1,9 +1,10 @@
 import { Browser, chromium, devices, Page, ViewportSize } from "playwright";
 import fs from "fs";
 import { URL } from "url";
-import { addLinks, screenshot, SetQueue, stripPrefix } from "../lib";
-import { CliUx, Command } from "@oclif/core"
-import { FLAGS, PaparazziProps } from "../lib/PaparazziProps";
+import { addLinks, screenshot, SetQueue, stripPrefix } from "../lib/index.js";
+import { ux, Command } from "@oclif/core"
+import { FLAGS, PaparazziProps } from "../lib/PaparazziProps.js";
+
 // Defining the type locally as it is not exported from Playwright
 type DeviceDescriptor = {
     viewport: ViewportSize;
@@ -15,6 +16,7 @@ type DeviceDescriptor = {
 };
 
 export class Paparazzi extends Command {
+    static enableVersionFlag = true;
     static description = "A tool to take snaps of all angles of your website";
     static usage = "[flags] <URL1> [<URL2> ...]";
     static flags = FLAGS;
@@ -97,7 +99,7 @@ export class Paparazzi extends Command {
     async takeScreenshots(q: SetQueue<string>, page: Page, flags: PaparazziProps, allowedHosts: string[]) {
         while (!q.empty()) {
             const url = q.pop();
-            CliUx.ux.action.start(`Snapping ${url}`);
+            ux.action.start(`Snapping ${url}`);
             await screenshot({
                 page: page,
                 url: url,
@@ -109,7 +111,7 @@ export class Paparazzi extends Command {
                 allowedHosts: allowedHosts,
                 baseProps: flags
             });
-            CliUx.ux.action.stop();
+            ux.action.stop();
         }
     }
 

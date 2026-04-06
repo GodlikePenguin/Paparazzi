@@ -6,10 +6,15 @@ jobs:
     env:
       PUPPETEER_SKIP_DOWNLOAD: true
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Setup Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
-          node-version: "16"
+          node-version: "22"
+          cache: "npm"
+      - name: Install Dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build
       - name: Run the tests
         run: ./scripts/test-install.sh

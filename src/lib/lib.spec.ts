@@ -1,8 +1,9 @@
-import { calledWithFn, mock, MockProxy } from "jest-mock-extended";
+import { describe, expect, it, beforeEach, vi } from "vitest";
+import { mock, MockProxy } from "vitest-mock-extended";
 import type { Page } from "playwright";
-import { addLinks, screenshot } from "./lib"
-import { PaparazziProps } from "./PaparazziProps";
-import SetQueue from "./SetQueue";
+import { addLinks, screenshot } from "./lib.js"
+import { PaparazziProps } from "./PaparazziProps.js";
+import SetQueue from "./SetQueue.js";
 
 const defaultConfig: PaparazziProps = {
   output: "./images",
@@ -19,7 +20,7 @@ const defaultConfig: PaparazziProps = {
 };
 
 describe("screenshot()", () => {
-  test("should call goto(), waitFor() and screenshot() on the page argument", async () => {
+  it("should call goto(), waitFor() and screenshot() on the page argument", async () => {
     const page = mock<Page>();
     const url = "fake/url";
 
@@ -29,9 +30,9 @@ describe("screenshot()", () => {
       baseProps: defaultConfig
     });
 
-    expect(page.goto).toBeCalledWith(url);
-    expect(page.waitForTimeout).toBeCalledWith(defaultConfig.delay);
-    expect(page.screenshot).toBeCalledTimes(1);
+    expect(page.goto).toHaveBeenCalledWith(url);
+    expect(page.waitForTimeout).toHaveBeenCalledWith(defaultConfig.delay);
+    expect(page.screenshot).toHaveBeenCalledTimes(1);
   })
 });
 
@@ -41,12 +42,13 @@ describe("addLinks()", () => {
   const linksToScrape = ["http://example.com", "http://example.com/another", "http://example.com/another#anchor"];
 
   beforeEach(() => {
+    vi.clearAllMocks();
     setQueue = mock<SetQueue<string>>();
     page = mock<Page>();
   })
 
-  test("should add scraped links to the queue", async () => {
-    page.$$eval.mockImplementation(async () => linksToScrape);
+  it("should add scraped links to the queue", async () => {
+    page.$$eval.mockResolvedValue(linksToScrape);
 
     await addLinks({
       page: page,
@@ -58,12 +60,12 @@ describe("addLinks()", () => {
     })
 
     for (const link of linksToScrape) {
-      expect(setQueue.push).toBeCalledWith(link);
+      expect(setQueue.push).toHaveBeenCalledWith(link);
     }
   })
 
-  test("should not add links if they are not in allowedHosts", async () => {
-    page.$$eval.mockImplementation(async () => linksToScrape);
+  it("should not add links if they are not in allowedHosts", async () => {
+    page.$$eval.mockResolvedValue(linksToScrape);
 
     await addLinks({
       page: page,
@@ -74,11 +76,11 @@ describe("addLinks()", () => {
       baseProps: defaultConfig
     })
 
-    expect(setQueue.push).toBeCalledTimes(0);
+    expect(setQueue.push).not.toHaveBeenCalled();
   })
 
-  test("should add links regardless of host if allowAllHosts is true", async () => {
-    page.$$eval.mockImplementation(async () => linksToScrape);
+  it("should add links regardless of host if allowAllHosts is true", async () => {
+    page.$$eval.mockResolvedValue(linksToScrape);
 
     await addLinks({
       page: page,
@@ -93,12 +95,12 @@ describe("addLinks()", () => {
     })
 
     for (const link of linksToScrape) {
-      expect(setQueue.push).toBeCalledWith(link);
+      expect(setQueue.push).toHaveBeenCalledWith(link);
     }
   })
 
-  test("should strip hashes from links before adding to the queue when ignoreAnchors is true", async () => {
-    page.$$eval.mockImplementation(async () => linksToScrape);
+  it("should strip hashes from links before adding to the queue when ignoreAnchors is true", async () => {
+    page.$$eval.mockResolvedValue(linksToScrape);
 
     await addLinks({
       page: page,
@@ -112,9 +114,9 @@ describe("addLinks()", () => {
       }
     })
 
-    expect(setQueue.push).toBeCalledTimes(3);
-    expect(setQueue.push).nthCalledWith(1, "http://example.com");
-    expect(setQueue.push).nthCalledWith(2, "http://example.com/another");
-    expect(setQueue.push).nthCalledWith(3, "http://example.com/another");
+    expect(setQueue.push).toHaveBeenCalledTimes(3);
+    expect(setQueue.push).toHaveBeenNthCalledWith(1, "http://example.com");
+    expect(setQueue.push).toHaveBeenNthCalledWith(2, "http://example.com/another");
+    expect(setQueue.push).toHaveBeenNthCalledWith(3, "http://example.com/another");
   })
 })

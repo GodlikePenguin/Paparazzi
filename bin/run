@@ -1,4 +1,4 @@
 #!/usr/bin/env node
-const oclif = require("@oclif/core")
+import { execute } from "@oclif/core";
 
-oclif.run().then(require("@oclif/core/flush")).catch(require("@oclif/core/handle"))
+await execute({ type: "esm", dir: import.meta.url });
